@@ -93,7 +93,7 @@ def download_and_merge(json_path, download_dir, combined_pdf_name="combined.pdf"
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python eco111_organizer.py <path_to_json> <download_dir> [combined_pdf_name]")
+        print("Usage: python organizer.py <path_to_json> <download_dir> [combined_pdf_name]")
         sys.exit(1)
 
     json_file = sys.argv[1]
