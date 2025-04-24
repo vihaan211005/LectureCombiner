@@ -4,7 +4,24 @@ import json
 import requests
 import subprocess
 from pathlib import Path
-from PyPDF2 import PdfMerger, PdfReader
+from PyPDF2 import PdfMerger, PdfReader, PdfWriter
+
+def remove_bookmarks(pdf_path):
+    reader = PdfReader(str(pdf_path))
+    writer = PdfWriter()
+
+    # Copy all pages from the original PDF to the writer
+    for page_num in range(len(reader.pages)):
+        writer.add_page(reader.pages[page_num])
+
+    # Set the outline (bookmarks) to an empty list
+    writer.add_metadata({'/Title': 'No Bookmarks PDF'})
+
+    # Overwrite the original PDF with the cleaned version
+    with open(pdf_path, 'wb') as f:
+        writer.write(f)
+
+    print(f"✅ Removed bookmarks. Overwritten PDF at: {pdf_path}")
 
 def convert_pptx_to_pdf(pptx_path, output_dir):
     pdf_path = output_dir / (pptx_path.stem + ".pdf")
@@ -21,6 +38,7 @@ def convert_pptx_to_pdf(pptx_path, output_dir):
             "--outdir", str(output_dir),
             str(pptx_path)
         ], check=True)
+        remove_bookmarks(pdf_path)
         return pdf_path if pdf_path.exists() else None
     except subprocess.CalledProcessError as e:
         print(f"❌ Conversion failed for {pptx_path.name}: {e}")
